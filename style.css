@@ -109,7 +109,8 @@ h1 {
 .controls {
     display: flex;
     justify-content: center;
-    gap: 8px;
+    gap: 12px;
+    flex-wrap: wrap; /* Prevent overflow on small screens */
 }
 
 /* Apple Styled Buttons */
@@ -192,6 +193,76 @@ input[type="range"]::-webkit-slider-thumb {
     border: 0.5px solid #ccc;
 }
 
+/* Audio & Statistics */
+.audio-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 8px 0;
+    justify-content: center;
+}
+
+.audio-toggle input[type="checkbox"] {
+    appearance: none;
+    width: 32px;
+    height: 18px;
+    background: #3a3a3c;
+    border-radius: 20px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.audio-toggle input[type="checkbox"]:checked {
+    background: #34c759;
+}
+
+.audio-toggle input[type="checkbox"]::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    background: white;
+    border-radius: 50%;
+    transition: left 0.2s;
+}
+
+.audio-toggle input[type="checkbox"]:checked::after {
+    left: 16px;
+}
+
+.stats-row {
+    display: flex;
+    gap: 12px;
+    margin: 16px 0;
+    justify-content: center;
+    width: 100%;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px 20px;
+    border-radius: 12px;
+    text-align: center;
+    min-width: 100px;
+}
+
+.stat-label {
+    display: block;
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 18px;
+    font-weight: 700;
+}
+
 /* Game Components */
 #goal-section {
     padding: 32px 40px;
@@ -230,7 +301,71 @@ input[type="range"]::-webkit-slider-thumb {
 #game-grid[data-size="4"] { grid-template-columns: repeat(4, var(--tile-size)); }
 
 :root {
-    --tile-size: 7rem; /* Scale up */
+    --tile-size: 7rem; /* Desktop Scale */
+}
+
+@media (max-width: 768px) {
+    :root {
+        --tile-size: 5.5rem;
+    }
+    
+    body {
+        padding: 40px 16px;
+        gap: 32px;
+    }
+
+    .app-container, main {
+        gap: 32px;
+    }
+
+    h1 {
+        font-size: 36px;
+    }
+
+    .subtitle {
+        font-size: 16px;
+    }
+
+    .goal-item {
+        width: 44px;
+        height: 44px;
+    }
+
+    .status-bar {
+        padding: 24px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --tile-size: 18vw; /* Fluid scaling for very small screens */
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .difficulty-select button {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    input[type="range"] {
+        width: 100%;
+    }
+
+    .settings-bar {
+        padding: 0 10px;
+    }
+
+    .modal-overlay {
+        padding: 40px 20px;
+    }
+
+    #win-title {
+        font-size: 24px;
+    }
 }
 
 .tile {

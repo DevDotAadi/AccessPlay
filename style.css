@@ -47,12 +47,15 @@ body {
     gap: 32px;
 }
 
-.app-container {
+.app-container, main {
     width: 100%;
-    max-width: 800px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 64px; /* Consistent breathing space */
+}
+
+.app-container {
+    max-width: 800px;
 }
 
 /* Apple Liquid Glass */
@@ -291,6 +294,62 @@ input[type="range"]::-webkit-slider-thumb {
     color: var(--text-secondary);
     text-align: center;
     margin-top: 10px;
+}
+
+/* Modal Overlay (Win Screen) */
+.modal-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 90%;
+    max-width: 500px;
+    z-index: 2000;
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    text-align: center;
+    padding: 60px 40px;
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0, 0, 0.5, 1);
+    pointer-events: none;
+}
+
+.modal-overlay.is-visible {
+    display: flex;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    pointer-events: auto;
+}
+
+#win-title {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+#win-message {
+    color: var(--text-secondary);
+    font-size: 17px;
+}
+
+.win-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.win-controls button {
+    width: 100%;
+}
+
+/* Background Dimmer when won */
+body.is-paused .app-container {
+    filter: blur(10px) grayscale(0.5);
+    opacity: 0.4;
+    pointer-events: none;
 }
 
 .sr-only {

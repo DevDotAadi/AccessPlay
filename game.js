@@ -45,7 +45,12 @@ class AccessPlay {
             restartBtn: document.getElementById('restart-btn'),
             difficultyBtns: document.querySelectorAll('.difficulty-select button'),
             speedInput: document.getElementById('scan-speed'),
-            speedVal: document.getElementById('speed-val')
+            speedVal: document.getElementById('speed-val'),
+            winScreen: document.getElementById('win-screen'),
+            finalMoves: document.getElementById('final-moves'),
+            nextLevelBtn: document.getElementById('next-level-btn'),
+            replayBtn: document.getElementById('replay-btn'),
+            exitBtn: document.getElementById('exit-btn')
         };
 
         this.init();
@@ -80,6 +85,14 @@ class AccessPlay {
             this.announce(`Scan interval set to ${speed} seconds`);
         });
 
+        // Win Screen Buttons
+        this.dom.nextLevelBtn.addEventListener('click', () => this.handleNextLevel());
+        this.dom.replayBtn.addEventListener('click', () => this.closeWinScreen() || this.startNewGame());
+        this.dom.exitBtn.addEventListener('click', () => {
+            this.closeWinScreen();
+            this.changeDifficulty('easy');
+        });
+
         // Click interaction
         this.dom.grid.addEventListener('click', (e) => {
             const tile = e.target.closest('.tile');
@@ -91,6 +104,7 @@ class AccessPlay {
     }
 
     startNewGame() {
+        this.closeWinScreen();
         const config = CONFIG.LEVELS[this.gameState.level];
         this.gameState.size = config.size;
         this.gameState.moves = 0;
@@ -108,27 +122,23 @@ class AccessPlay {
     generateGrid(config) {
         const { size, colors } = config;
         const totalTiles = size * size;
-        const tilesPerColor = Math.floor(totalTiles / colors);
         
-        let pool = [];
-        for (let i = 0; i < colors; i++) {
-            const shape = CONFIG.SHAPES[i];
-            for (let j = 0; j < tilesPerColor; j++) {
-                pool.push({ ...shape });
+        // Define our available shapes/colors for this level
+        const levelShapes = CONFIG.SHAPES.slice(0, colors);
+        
+        // Create the Target Grid (Column-based sorting)
+        // This ensures col 0 is all shape 0, col 1 is all shape 1, etc.
+        this.gameState.target = new Array(totalTiles);
+        for (let r = 0; r < size; r++) {
+            for (let c = 0; c < size; c++) {
+                // For non-square color distributions, we wrap the colors
+                const shapeIndex = c % colors;
+                this.gameState.target[r * size + c] = { ...levelShapes[shapeIndex] };
             }
         }
-
-        while (pool.length < totalTiles) {
-            pool.push({ ...CONFIG.SHAPES[0] });
-        }
-
-        if (this.gameState.level === 'hard') {
-            this.gameState.target = [...pool].sort((a, b) => a.color.localeCompare(b.color));
-        } else {
-            this.gameState.target = [...pool];
-        }
         
-        this.gameState.grid = this.shuffle([...pool]);
+        // Create the initial grid by shuffling the target tiles
+        this.gameState.grid = this.shuffle([...this.gameState.target]);
     }
 
     shuffle(array) {
@@ -227,32 +237,58 @@ class AccessPlay {
     }
 
     checkWin() {
-        const size = this.gameState.size;
         let isWon = true;
 
-        if (this.gameState.level === 'hard') {
-            for (let i = 0; i < this.gameState.grid.length; i++) {
-                if (this.gameState.grid[i].color !== this.gameState.target[i].color) {
-                    isWon = false;
-                    break;
-                }
-            }
-        } else {
-            for (let r = 0; r < size; r++) {
-                const firstColor = this.gameState.grid[r * size].color;
-                for (let c = 1; c < size; c++) {
-                    if (this.gameState.grid[r * size + c].color !== firstColor) {
-                        isWon = false; break;
-                    }
-                }
-                if (!isWon) break;
+        // Compare every tile to the target pattern
+        for (let i = 0; i < this.gameState.grid.length; i++) {
+            if (this.gameState.grid[i].color !== this.gameState.target[i].color) {
+                isWon = false;
+                break;
             }
         }
 
         if (isWon) {
             this.gameState.isWon = true;
-            this.announce(`Congratulations! Puzzle complete in ${this.gameState.moves} moves.`);
+            this.announce("Congratulations! Sorting complete. One moment...");
+            setTimeout(() => {
+                this.showWinScreen();
+            }, 2000); // 2 second delay
         }
+    }
+
+    showWinScreen() {
+        // Trigger Confetti (using canvas-confetti library)
+        if (window.confetti) {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#34d399', '#f87171', '#fbbf24', '#60a5fa', '#ffffff']
+            });
+        }
+
+        this.dom.finalMoves.textContent = this.gameState.moves;
+        this.dom.winScreen.classList.add('is-visible');
+        this.dom.winScreen.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('is-paused');
+        
+        this.announce(`Congratulations! Puzzle complete in ${this.gameState.moves} moves. Options: Next Level, Replay, or Reset.`);
+        
+        // Move focus to primary action
+        setTimeout(() => this.dom.nextLevelBtn.focus(), 100);
+    }
+
+    closeWinScreen() {
+        this.dom.winScreen.classList.remove('is-visible');
+        this.dom.winScreen.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('is-paused');
+    }
+
+    handleNextLevel() {
+        const levels = ['easy', 'medium', 'hard'];
+        const currentIndex = levels.indexOf(this.gameState.level);
+        const nextIndex = (currentIndex + 1) % levels.length;
+        this.changeDifficulty(levels[nextIndex]);
     }
 
     announce(msg) {
@@ -317,11 +353,11 @@ class AccessPlay {
         });
 
         this.dom.goal.innerHTML = '';
-        [...new Set(this.gameState.grid.map(t => t.color))].forEach(color => {
-            const s = CONFIG.SHAPES.find(sh => sh.color === color);
+        const goalRow = this.gameState.target.slice(0, this.gameState.size);
+        goalRow.forEach(shape => {
             const item = document.createElement('div');
             item.className = 'goal-item';
-            item.innerHTML = `<svg viewBox="0 0 100 100" class="shape-${s.type}">${s.icon}</svg>`;
+            item.innerHTML = `<svg viewBox="0 0 100 100" class="shape-${shape.type}">${shape.icon}</svg>`;
             this.dom.goal.appendChild(item);
         });
 

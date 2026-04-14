@@ -71,9 +71,21 @@
         </footer>
     </div>
 
+    <!-- Winning Screen Overlay -->
+    <div id="win-screen" class="glass-panel modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="win-title">
+        <h2 id="win-title">Puzzle Complete!</h2>
+        <p id="win-message">You sorted all tiles in <span id="final-moves">0</span> moves.</p>
+        <div class="win-controls">
+            <button id="next-level-btn">Next Level</button>
+            <button id="replay-btn">Replay</button>
+            <button id="exit-btn">Reset Game</button>
+        </div>
+    </div>
+
     <!-- Hidden ARIA Live Region for important announcements -->
     <div id="announcer" class="sr-only" aria-live="assertive"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="game.js"></script>
 </body>
 </html>

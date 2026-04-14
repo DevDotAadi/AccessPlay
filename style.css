@@ -1,0 +1,305 @@
+/* AccessPlay - Apple Monochrome Aesthetic */
+
+:root {
+    /* Apple's Neutral Palette */
+    --bg-color: #000000;
+    --panel-bg: rgba(28, 28, 30, 0.7); /* Apple SystemBackgroundSecondary */
+    --text-primary: #ffffff;
+    --text-secondary: #8e8e93; /* Apple SystemGray */
+    --accent: #ffffff;
+    --border: rgba(255, 255, 255, 0.15);
+    
+    /* Grayscale Tile "Colors" */
+    --tile-1: #ffffff;
+    --tile-2: #8e8e93;
+    --tile-3: #48484a;
+    --tile-4: #2c2c2e;
+    
+    --font-main: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --tile-size: 6rem;
+    --radius: 12px; /* Apple's standard radius */
+}
+
+body.high-contrast {
+    --bg-color: #000;
+    --panel-bg: #000;
+    --text-primary: #fff;
+    --border: #fff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: var(--font-main);
+    line-height: 1.4;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 80px 24px;
+    gap: 32px;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Apple Liquid Glass */
+.glass-panel {
+    background: var(--panel-bg);
+    backdrop-filter: blur(30px) saturate(200%);
+    -webkit-backdrop-filter: blur(30px) saturate(200%);
+    border: 0.5px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+}
+
+header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+h1 {
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -0.023em;
+    text-align: center;
+}
+
+.subtitle {
+    font-size: 19px;
+    color: var(--text-secondary);
+    font-weight: 400;
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+    line-height: 1.3;
+}
+
+.header-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* Apple Styled Buttons */
+button {
+    background: #2c2c2e;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 980px; /* Apple's pill shape */
+    font-family: var(--font-main);
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0, 0, 0.5, 1);
+}
+
+button:hover {
+    background: #3a3a3c;
+}
+
+button:focus-visible {
+    outline: 2px solid #007aff;
+    outline-offset: 2px;
+}
+
+button[aria-pressed="true"], .difficulty-select button[aria-checked="true"] {
+    background: #ffffff;
+    color: #000000;
+}
+
+.difficulty-select {
+    display: flex;
+    background: #1c1c1e;
+    padding: 2px;
+    border-radius: 10px;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.difficulty-select button {
+    background: transparent;
+    padding: 6px 16px;
+    font-size: 13px;
+}
+
+.difficulty-select button[aria-checked="true"] {
+    background: #636366;
+    color: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Settings */
+.settings-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center everything internally */
+    gap: 12px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    width: 100%;
+}
+
+input[type="range"] {
+    width: 300px; /* Slightly wider for better control */
+    max-width: 100%;
+    appearance: none;
+    background: #3a3a3c;
+    height: 4px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    border: 0.5px solid #ccc;
+}
+
+/* Game Components */
+#goal-section {
+    padding: 32px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.pattern-display {
+    display: flex;
+    flex-direction: row; /* Ensure horizontal */
+    gap: 20px;
+    justify-content: center;
+    background: rgba(0,0,0,0.3);
+    padding: 12px 24px;
+    border-radius: 12px;
+}
+
+.goal-item {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#game-grid {
+    display: grid;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+}
+
+#game-grid[data-size="3"] { grid-template-columns: repeat(3, var(--tile-size)); }
+#game-grid[data-size="4"] { grid-template-columns: repeat(4, var(--tile-size)); }
+
+:root {
+    --tile-size: 7rem; /* Scale up */
+}
+
+.tile {
+    width: var(--tile-size);
+    height: var(--tile-size);
+    background: #1c1c1e;
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0, 0, 0.5, 1);
+}
+
+.tile svg {
+    width: 40%;
+    height: 40%;
+    color: inherit;
+}
+
+.tile.is-focused {
+    border-color: #ffffff;
+    border-width: 2px;
+    transform: scale(1.02);
+}
+
+.tile.is-selected {
+    background: #ffffff;
+    color: #000000 !important;
+    transform: scale(1.1);
+    z-index: 10;
+}
+
+/* Shapes - Vibrant Pop (Increased Specificity) */
+.tile .shape-triangle, .goal-item .shape-triangle { color: #34d399 !important; } /* Emerald */
+.tile .shape-circle, .goal-item .shape-circle { color: #f87171 !important; }   /* Coral/Red */
+.tile .shape-diamond, .goal-item .shape-diamond { color: #fbbf24 !important; }  /* Amber/Yellow */
+.tile .shape-square, .goal-item .shape-square { color: #60a5fa !important; }   /* Blue */
+
+.tile svg, .goal-item svg {
+    filter: drop-shadow(0 0 8px currentColor);
+    opacity: 1;
+}
+
+.tile.is-selected svg {
+    filter: drop-shadow(0 0 12px rgba(255,255,255,0.5));
+}
+
+/* Status */
+.status-bar {
+    padding: 24px 40px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.instructions {
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: 10px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    border: 0;
+}
